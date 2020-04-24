@@ -36,6 +36,9 @@ unData_Processsed <-unData%>%filter(vote <= 3)%>%
 mutate(countryname = countrycode(ccode, "cown","country.name"), year = session + 1945)
 unData_Processsed
 
+# Grouping and calculating mean
+unData_Processsed%>%group_by(year)%>%
+summarise(mean1 = mean(vote== 1),mean2 =mean(vote ==2), mean3 =mean(vote ==3))
 
 
 
