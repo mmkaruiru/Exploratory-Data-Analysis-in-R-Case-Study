@@ -40,12 +40,22 @@ unData_Processsed
 unData_Processsed%>%group_by(year)%>%
 summarise(mean1 = mean(vote== 1),mean2 =mean(vote ==2), mean3 =mean(vote ==3))
 
+
 #Sorting and Filtering processed data
 by_country <- unData_Processsed %>%group_by(countryname) %>%  
 summarize(total = n(),percent_yes = mean(vote == 1))
 by_country%>%arrange(total)# Zanzibar had votes the least times
 
+#Sorting and Filtering processed data
+by_country <- unData_Processsed %>%group_by(countryname) %>%  
+summarize(total = n(),percent_yes = mean(vote == 1))
+
+by_country%>%arrange(total)
+# Zanzibar had votes the least times
+
+
 #Filtering summarized output and rremoving countries with fewer that 100 votes and rows with na's
 by_country %>%arrange(percent_yes)%>%filter(total>100)%>%na.omit()
 
+#Visualizing data with ggplot2
 
