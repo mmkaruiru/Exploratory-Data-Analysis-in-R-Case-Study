@@ -13,8 +13,9 @@ head(unData)
 #session - Represents the year long session when the vote was cast
 #vote - Represents a country's choice. eg 1 means Yes, 9 - Country not a memeber of UN
 #ccode - Country code, uniquely specifies the country
-# Importing dplyr
+# Importing dplyr,ggpplot2
 library(dplyr)
+library(ggplot2)
 
 #Filtering using pipe operator
 # On vote variable we only care of 1(yes), 2(no), 3(abstain)
@@ -42,20 +43,29 @@ summarise(mean1 = mean(vote== 1),mean2 =mean(vote ==2), mean3 =mean(vote ==3))
 
 
 #Sorting and Filtering processed data
-by_country <- unData_Processsed %>%group_by(countryname) %>%  
+by_year <- unData_Processsed %>%group_by(year) %>%  
 summarize(total = n(),percent_yes = mean(vote == 1))
 by_country%>%arrange(total)# Zanzibar had votes the least times
 
 #Sorting and Filtering processed data
-by_country <- unData_Processsed %>%group_by(countryname) %>%  
+by_year <- unData_Processsed %>%group_by(year) %>%  
 summarize(total = n(),percent_yes = mean(vote == 1))
 
-by_country%>%arrange(total)
+by_year%>%arrange(total)
 # Zanzibar had votes the least times
 
 
-#Filtering summarized output and rremoving countries with fewer that 100 votes and rows with na's
-by_country %>%arrange(percent_yes)%>%filter(total>100)%>%na.omit()
+#Filtering summarized output and removing countries with fewer that 100 votes and rows with na's
+by_year %>%arrange(percent_yes)%>%filter(total>100)%>%na.omit()
 
-#Visualizing data with ggplot2
+#Visualizing by year with ggplot2
+ggplot(by_year, aes(x=year,y= percent_yes))+ geom_line()+ geom_smooth()
+
+#Visualizing by country
+by_year_country<- unData_Processsed%>%group_by(countryname,year)%>%summarise(total = n(),percent_yes = mean(vote ==1))
+by_year_country
+
+#Visualizing us and Germany
+us_germany<-by_year_country%>%filter(countryname %in% c("United States","Germany"))
+ggplot(us_germany, aes(x=year, y= percent_yes, color = countryname))+ geom_line()
 
