@@ -69,3 +69,5 @@ by_year_country
 us_germany<-by_year_country%>%filter(countryname %in% c("United States","Germany"))
 ggplot(us_germany, aes(x=year, y= percent_yes, color = countryname))+ geom_line()
 
+#Faceting
+
