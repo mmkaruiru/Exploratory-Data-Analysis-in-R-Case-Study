@@ -90,3 +90,47 @@ afghan_model<- lm(percent_yes~year, data = afghan)
 afghan_model
 summary(afghan_model)
 
+#broom Package for multiple Linear Regresssion
+library(broom)
+tidy(afghan_model)
+US<- by_year_country%>%filter(countryname == "United States")
+Us_Model<- lm(percent_yes~year, data = US)
+tidy(Us_Model)
+bind_rows(tidy(afghan_model), tidy(Us_Model))
+
+#Nesting for multiple models
+library(tidyr)
+by_year_country%>%nest(-countryname)
+
+#Mapping to fit linear models on all countrynames
+library(purrr)
+by_year_country%>%nest(-countryname)%>%
+  mutate(models = map(data, ~ lm(percent_yes ~year, .)))
+#Tidying the dataframe to get 3 columns for each country
+by_year_country%>%nest(-countryname)%>%
+  mutate(models = map(data, ~ lm(percent_yes ~year, .)))%>%
+  mutate(tidied = map(models, tidy))
+#Unnesting
+countries_coefficients<-by_year_country%>%nest(-countryname)%>%
+  mutate(models = map(data, ~ lm(percent_yes ~year, .)))%>%
+  mutate(tidied = map(models, tidy))%>%unnest(tidied)
+countries_coefficients
+#Working with many tidy models
+countries_coefficients%>%filter(term=="year")
+
+#Correcting the p-values. Note: P-values of less than 0.05 are statistical significant
+#Common issues arise when running multiple models to evaluate their p-values
+#This is corrected by doing a multiple hypothesis correction because some p-values
+#will be less than 0.05 by chance.
+#Here we shall use built in function on R for adjusting the p-values to feel
+#more safe in our assumptions
+slopes_terms<-countries_coefficients%>%
+  mutate(p.adjusted = p.adjust(p.value))%>%filter(term =="year", p.adjusted < 0.05)
+slopes_terms
+#Sorting countries to find those with percent_yes increasing
+slopes_terms %>%
+  arrange(desc(estimate))
+#Sorting countries to find those with percent_yes decreasing
+slopes_terms %>%
+  arrange(estimate)
+
