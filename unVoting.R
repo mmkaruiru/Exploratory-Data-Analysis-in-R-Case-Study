@@ -89,3 +89,4 @@ afghan
 afghan_model<- lm(percent_yes~year, data = afghan)
 afghan_model
 summary(afghan_model)
+
