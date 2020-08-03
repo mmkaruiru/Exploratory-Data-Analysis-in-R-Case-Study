@@ -70,4 +70,22 @@ us_germany<-by_year_country%>%filter(countryname %in% c("United States","Germany
 ggplot(us_germany, aes(x=year, y= percent_yes, color = countryname))+ geom_line()
 
 #Faceting
+#Examining 6 countries
+countries<-  c("United States", "United Kingdom",
+               "France", "Japan", "Brazil", "India")
+#Filtering the countries
+filtered_countries<- by_year_country%>%filter(countryname %in% countries)
+filtered_countries
 
+#Visualizing by Faceting( percentage voted for yes from 6 countries)
+ggplot(filtered_countries, aes(year, percent_yes)) + geom_line()+ facet_wrap(~countryname)
+
+#Faceting with free y axis
+ggplot(filtered_countries, aes(year, percent_yes)) + geom_line()+ facet_wrap(~countryname,scales="free_y")
+
+#Linear Regression
+afghan<-by_year_country%>% filter(countryname== "Afghanistan")
+afghan
+afghan_model<- lm(percent_yes~year, data = afghan)
+afghan_model
+summary(afghan_model)
